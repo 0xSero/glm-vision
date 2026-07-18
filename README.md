@@ -1,4 +1,4 @@
-# fable-glm-vision — teach GLM-5.2 to see art
+# Teach GLM-5.2 to see art
 
 Minimal scripts to give [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2) vision
 by training **only a 44.8M-parameter projector** (a 2-layer MLP) between a frozen
