@@ -1,0 +1,10 @@
+torch>=2.7.0
+transformers>=5.14.0
+accelerate>=1.14.0
+bitsandbytes>=0.49.0
+datasets>=5.0.0
+safetensors>=0.8.0
+pillow
+sentencepiece
+tiktoken
+peft
