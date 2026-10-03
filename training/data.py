@@ -317,6 +317,14 @@ class VisionSFTCollator:
             new_h = (new_h // round_to) * round_to
         else:
             new_w, new_h = w, h
+        # Raising a short side to 28px can push a wide image back over the cap.
+        while new_w * new_h > self.max_image_pixels and (new_w > round_to or new_h > round_to):
+            if new_w >= new_h and new_w > round_to:
+                new_w -= round_to
+            elif new_h > round_to:
+                new_h -= round_to
+            else:
+                break
         img = img.resize((new_w, new_h), Image.BILINEAR)
 
         arr = torch.from_numpy(
