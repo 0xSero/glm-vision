@@ -26,9 +26,6 @@ import json
 import random
 from pathlib import Path
 
-from datasets import load_dataset
-from PIL import Image
-
 PATCH = 14
 MERGE = 2
 ROUND = PATCH * MERGE  # 28px
@@ -45,11 +42,20 @@ def preprocess_size(w: int, h: int, max_pixels: int) -> tuple[int, int]:
         w, h = int(w * scale), int(h * scale)
     w = max(ROUND, (w // ROUND) * ROUND)
     h = max(ROUND, (h // ROUND) * ROUND)
+    # Raising a short side to 28px can push a wide image back over the cap.
+    while w * h > max_pixels and (w > ROUND or h > ROUND):
+        if w >= h and w > ROUND:
+            w -= ROUND
+        elif h > ROUND:
+            h -= ROUND
+        else:
+            break
     return w, h
 
 
 def save_image(img: Image.Image, img_dir: Path, prefix: str, idx: int,
                max_pixels: int) -> str:
+    from PIL import Image
     if img.mode != "RGB":
         img = img.convert("RGB")
     w, h = preprocess_size(*img.size, max_pixels)
@@ -71,6 +77,8 @@ def make_example(img_path: str, question: str, answer: str) -> dict:
 
 
 def build_wikiart(args) -> list[dict]:
+    from datasets import load_dataset
+
     print("Loading Artificio/WikiArt_Full...", flush=True)
     ds = load_dataset("Artificio/WikiArt_Full", split="train")
     drop = [c for c in ds.column_names
@@ -128,6 +136,8 @@ def build_wikiart(args) -> list[dict]:
 
 
 def build_fashion(args) -> list[dict]:
+    from datasets import load_dataset
+
     print("Loading fashion-product-images-small-384x512...", flush=True)
     ds = load_dataset("benitomartin/fashion-product-images-small-384x512",
                       split="train")
